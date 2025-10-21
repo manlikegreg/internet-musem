@@ -378,6 +378,69 @@ function GroqManager() {
   )
 }
 
+function LinksManager() {
+  const [kofi, setKofi] = useState('https://ko-fi.com/its_simon_only')
+  const [whatsapp, setWhatsapp] = useState('')
+  const [telegram, setTelegram] = useState('')
+  const [tiktok, setTiktok] = useState('')
+  const [msg, setMsg] = useState('')
+
+  const load = async () => {
+    try {
+      const { data } = await api.get('/admin/config/links')
+      setKofi(data?.kofi || 'https://ko-fi.com/its_simon_only')
+      setWhatsapp(data?.whatsapp || '')
+      setTelegram(data?.telegram || '')
+      setTiktok(data?.tiktok || '')
+      setMsg('')
+    } catch (e) {
+      setMsg('Failed to load links config')
+    }
+  }
+
+  const save = async () => {
+    try {
+      await api.post('/admin/config/links', { kofi, whatsapp, telegram, tiktok })
+      setMsg('Links saved')
+    } catch (e) {
+      setMsg('Failed to save links')
+    }
+  }
+
+  useEffect(() => { load() }, [])
+
+  return (
+    <div className="mt-8 bg-white/5 border border-white/10 rounded-2xl p-4">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-xl font-semibold">Support & Contact Links</h2>
+        <button onClick={load} className="px-3 py-1 rounded bg-white/10 hover:bg-white/20 text-sm">Reload</button>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label className="text-sm text-slate-300">Ko-fi URL</label>
+          <input value={kofi} onChange={e=>setKofi(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded px-3 py-2" placeholder="https://ko-fi.com/..." />
+        </div>
+        <div>
+          <label className="text-sm text-slate-300">WhatsApp URL</label>
+          <input value={whatsapp} onChange={e=>setWhatsapp(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded px-3 py-2" placeholder="https://wa.me/number" />
+        </div>
+        <div>
+          <label className="text-sm text-slate-300">Telegram URL</label>
+          <input value={telegram} onChange={e=>setTelegram(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded px-3 py-2" placeholder="https://t.me/username" />
+        </div>
+        <div>
+          <label className="text-sm text-slate-300">TikTok URL</label>
+          <input value={tiktok} onChange={e=>setTiktok(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded px-3 py-2" placeholder="https://www.tiktok.com/@username" />
+        </div>
+      </div>
+      <div className="mt-3 flex items-center gap-2">
+        <button onClick={save} className="px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-700">Save Links</button>
+        {msg && <div className="text-xs text-slate-300">{msg}</div>}
+      </div>
+    </div>
+  )
+}
+
 export default function Admin() {
   const [stats, setStats] = useState<Stats>({})
   const [loading, setLoading] = useState(false)

@@ -9,19 +9,37 @@ export function MusicToggle() {
   const [ambientUrl, setAmbientUrl] = useState<string | null>(null)
   const [on, setOn] = useState(false)
 
+  const resolveUrl = (url: string | null) => {
+    if (!url) return null
+    try {
+      // If backend returns relative path like "/uploads/...", prefix with API origin
+      if (url.startsWith('/')) {
+        const base = (api.defaults.baseURL || '').replace(/\/api$/, '')
+        if (base) return base + url
+      }
+      return url
+    } catch {
+      return url
+    }
+  }
+
   // Fetch current ambient sound URL from Admin-configured setting
+  const loadAmbient = async () => {
+    try {
+      const { data } = await api.get('/admin/config/ambient')
+      setAmbientUrl(data?.url || null)
+    } catch (e) {
+      setAmbientUrl(null)
+    }
+  }
+
   useEffect(() => {
     let mounted = true
-    const loadAmbient = async () => {
-      try {
-        const { data } = await api.get('/admin/config/ambient')
-        if (mounted) setAmbientUrl(data?.url || null)
-      } catch (e) {
-        if (mounted) setAmbientUrl(null)
-      }
-    }
-    loadAmbient()
-    return () => { mounted = false }
+    ;(async () => { if (mounted) await loadAmbient() })()
+    // Re-fetch when page becomes visible (helps after refresh)
+    const onVis = () => { if (document.visibilityState === 'visible') loadAmbient() }
+    document.addEventListener('visibilitychange', onVis)
+    return () => { mounted = false; document.removeEventListener('visibilitychange', onVis) }
   }, [])
 
   useEffect(() => {
@@ -38,15 +56,16 @@ export function MusicToggle() {
 
     if (on) {
       // Try playing Admin-selected ambient audio first
-      if (ambientUrl) {
+      const src = resolveUrl(ambientUrl)
+      if (src) {
         try {
           if (!audioRef.current) {
-            audioRef.current = new Audio(ambientUrl)
+            audioRef.current = new Audio(src)
             audioRef.current.loop = true
             audioRef.current.volume = 0.35
-          } else if (audioRef.current.src !== ambientUrl) {
+          } else if (audioRef.current.src !== src) {
             audioRef.current.pause()
-            audioRef.current.src = ambientUrl
+            audioRef.current.src = src
             audioRef.current.load()
           }
           audioRef.current.play().catch(() => {
@@ -125,8 +144,17 @@ export function MusicToggle() {
     }
   }, [])
 
+  // When toggling ON, ensure latest ambient URL is fetched
+  const handleToggle = async () => {
+    setOn(v => !v)
+    // If turning ON, try to refresh ambient URL first
+    setTimeout(() => { if (!ambientUrl) loadAmbient() }, 0)
+    // Resume context on user gesture to satisfy autoplay policies
+    try { if (audioContextRef.current && audioContextRef.current.state === 'suspended') audioContextRef.current.resume() } catch {}
+  }
+
   return (
-    <button onClick={() => setOn(v => !v)} className="px-3 py-1 rounded border border-slate-700 text-sm hover:bg-slate-800">
+    <button onClick={handleToggle} className="px-3 py-1 rounded border border-slate-700 text-sm hover:bg-slate-800">
       {on ? '🔊 Ambient On' : '🔈 Ambient Off'}
     </button>
   )

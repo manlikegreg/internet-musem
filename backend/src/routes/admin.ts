@@ -362,6 +362,41 @@ router.post('/config/ambient', upload.single('sound'), async (req, res) => {
   }
 })
 
+// Social & Support links config
+router.get('/config/links', async (_req, res) => {
+  try {
+    const keys = ['KOFI_URL','CONTACT_WHATSAPP','CONTACT_TELEGRAM','CONTACT_TIKTOK']
+    const r = await pool.query("SELECT key, value FROM site_config WHERE key = ANY($1)", [keys])
+    const map: Record<string,string> = {}
+    for (const row of r.rows) { map[row.key] = row.value }
+    res.json({
+      kofi: map['KOFI_URL'] || 'https://ko-fi.com/its_simon_only',
+      whatsapp: map['CONTACT_WHATSAPP'] || '',
+      telegram: map['CONTACT_TELEGRAM'] || '',
+      tiktok: map['CONTACT_TIKTOK'] || ''
+    })
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to fetch links config' })
+  }
+})
+
+router.post('/config/links', async (req, res) => {
+  try {
+    const { kofi, whatsapp, telegram, tiktok } = req.body || {}
+    const pairs: Array<[string,string]> = []
+    if (typeof kofi === 'string' && kofi.trim()) pairs.push(['KOFI_URL', kofi.trim()])
+    if (typeof whatsapp === 'string') pairs.push(['CONTACT_WHATSAPP', whatsapp.trim()])
+    if (typeof telegram === 'string') pairs.push(['CONTACT_TELEGRAM', telegram.trim()])
+    if (typeof tiktok === 'string') pairs.push(['CONTACT_TIKTOK', tiktok.trim()])
+    for (const [k,v] of pairs) {
+      await pool.query("INSERT INTO site_config (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value", [k, v])
+    }
+    res.json({ ok: true })
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to save links config' })
+  }
+})
+
 export default router
 
 async function getAdminToken(): Promise<string> {
