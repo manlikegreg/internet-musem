@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes void-float {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-120vh); opacity: 0; }
+}
+.animate-void-float {
+  animation: void-float 19s linear forwards;
+}
+
+:root {
+  --bg: #0b1020;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background: radial-gradient(100% 100% at 0% 0%, #0b1020 0%, #0a0a0a 100%);
+}

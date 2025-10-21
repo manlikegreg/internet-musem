@@ -1,0 +1,19 @@
+# Node
+node_modules/
+
+# Builds
+backend/dist/
+frontend/dist/
+
+# Env
+.env
+backend/.env
+frontend/.env
+
+# Secrets and tokens
+# do not commit PAT tokens
+/token.txt
+/token.txt.txt
+
+# Uploads and generated content
+backend/uploads/

@@ -1,0 +1,13 @@
+{
+  "name": "internet-museum",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix frontend\" \"npm run dev --prefix backend\"",
+    "install:all": "npm --prefix frontend install && npm --prefix backend install",
+    "build": "npm --prefix backend run build && npm --prefix frontend run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
