@@ -101,7 +101,7 @@ function VoiceRecorderConf() {
   const timerRef = useRef<number | null>(null)
   const recRef = useRef<MediaRecorder | null>(null)
 
-  useEffect(() => { setSupported(typeof window !== 'undefined' && 'MediaRecorder' in window && navigator?.mediaDevices?.getUserMedia) }, [])
+  useEffect(() => { setSupported(typeof window !== 'undefined' && 'MediaRecorder' in window && !!navigator?.mediaDevices?.getUserMedia) }, [])
 
   async function start(){
     if (!supported || recording) return

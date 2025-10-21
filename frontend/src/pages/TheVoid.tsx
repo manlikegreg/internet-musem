@@ -7,7 +7,7 @@ function Starfield() {
   useEffect(() => {
     const canvas = ref.current
     if (!canvas) return
-    const ctx = canvas.getContext('2d')
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
     if (!ctx) return
     let raf = 0
     const stars = Array.from({ length: 120 }, () => ({
@@ -57,7 +57,7 @@ function VoiceRecorder() {
   const chunksRef = useRef<BlobPart[]>([])
 
   useEffect(() => {
-    setSupported(typeof window !== 'undefined' && 'MediaRecorder' in window && navigator?.mediaDevices?.getUserMedia)
+    setSupported(typeof window !== 'undefined' && 'MediaRecorder' in window && !!navigator?.mediaDevices?.getUserMedia)
     return () => { if (timerRef.current) window.clearInterval(timerRef.current) }
   }, [])
 

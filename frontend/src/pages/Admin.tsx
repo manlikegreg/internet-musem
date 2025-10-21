@@ -507,13 +507,14 @@ export default function Admin() {
           </div>
           <div className="text-xs text-slate-400 mt-2">Changes take effect immediately for new sessions.</div>
         </div>
-          {tables.map(t => (
-            <div key={t} className="bg-white/5 border border-white/10 rounded-xl p-3">
-              <div className="text-xs uppercase text-slate-400">{t.replace(/_/g,' ')}</div>
-              <div className="text-2xl font-semibold">{stats[t] ?? 0}</div>
-            </div>
-          ))}
-        </div>
++        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+           {tables.map(t => (
+             <div key={t} className="bg-white/5 border border-white/10 rounded-xl p-3">
+               <div className="text-xs uppercase text-slate-400">{t.replace(/_/g,' ')}</div>
+               <div className="text-2xl font-semibold">{stats[t] ?? 0}</div>
+             </div>
+           ))}
+         </div>
 
         <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
