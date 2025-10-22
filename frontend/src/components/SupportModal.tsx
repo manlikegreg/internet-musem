@@ -11,8 +11,15 @@ type Links = {
 export function SupportModal({ open, onClose, links: initialLinks }: { open: boolean, onClose: ()=>void, links?: Links }) {
   const [links, setLinks] = useState<Links>(initialLinks || {})
 
+  // Keep local state in sync if parent passes links later
   useEffect(() => {
-    if (initialLinks) return
+    if (initialLinks) setLinks(initialLinks)
+  }, [initialLinks])
+
+  useEffect(() => {
+    // Only fetch if no initial links or the object is empty
+    const hasInitial = initialLinks && Object.keys(initialLinks).length > 0
+    if (hasInitial) return
     let cancelled = false
     ;(async () => {
       try {
