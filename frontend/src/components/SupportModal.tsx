@@ -57,13 +57,25 @@ export function SupportModal({ open, onClose, links: initialLinks }: { open: boo
               <div className="flex flex-wrap gap-2">
                 {socials.map(({ key, label }) => {
                   const url = links[key]
-                  if (!url) return null
                   let styles = 'px-3 py-2 rounded-lg text-sm font-semibold shadow'
                   if (key === 'whatsapp') styles += ' bg-emerald-500 text-white hover:bg-emerald-400'
                   else if (key === 'telegram') styles += ' bg-blue-500 text-white hover:bg-blue-400'
                   else if (key === 'tiktok') styles += ' bg-pink-500 text-white hover:bg-pink-400'
+                  const disabled = !url
+                  if (disabled) styles += ' opacity-50 cursor-not-allowed hover:opacity-60'
                   return (
-                    <a key={key} href={url} target="_blank" rel="noopener noreferrer" className={styles}>{label}</a>
+                    <a
+                      key={key}
+                      href={url || '#'}
+                      target={url ? '_blank' : undefined}
+                      rel={url ? 'noopener noreferrer' : undefined}
+                      onClick={disabled ? (e) => e.preventDefault() : undefined}
+                      className={styles}
+                      aria-disabled={disabled}
+                      title={disabled ? 'Configure in Admin' : undefined}
+                    >
+                      {label}
+                    </a>
                   )
                 })}
               </div>
