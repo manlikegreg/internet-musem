@@ -423,15 +423,15 @@ function LinksManager() {
         </div>
         <div>
           <label className="text-sm text-slate-300">WhatsApp URL</label>
-          <input value={whatsapp} onChange={e=>setWhatsapp(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded px-3 py-2" placeholder="https://wa.me/number" />
+          <input value={whatsapp} onChange={e=>setWhatsapp(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded px-3 py-2" placeholder="Enter WhatsApp number only, e.g. 2348012345678" />
         </div>
         <div>
           <label className="text-sm text-slate-300">Telegram URL</label>
-          <input value={telegram} onChange={e=>setTelegram(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded px-3 py-2" placeholder="https://t.me/username" />
+          <input value={telegram} onChange={e=>setTelegram(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded px-3 py-2" placeholder="Enter Telegram username only, e.g. username" />
         </div>
         <div>
-          <label className="text-sm text-slate-300">TikTok URL</label>
-          <input value={tiktok} onChange={e=>setTiktok(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded px-3 py-2" placeholder="https://www.tiktok.com/@username" />
++           <label className="text-sm text-slate-300">TikTok URL</label>
+          <input value={tiktok} onChange={e=>setTiktok(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded px-3 py-2" placeholder="Enter TikTok handle, e.g. @handle" />
         </div>
       </div>
       <div className="mt-3 flex items-center gap-2">

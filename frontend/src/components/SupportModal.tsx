@@ -27,6 +27,26 @@ export function SupportModal({ open, onClose, links: initialLinks }: { open: boo
 
   if (!open) return null
 
+  // Build full URLs from raw identifiers if admin stored only number/username/handle
+  const formatUrl = (key: keyof Links, raw?: string) => {
+    const v = (raw || '').trim()
+    if (!v) return ''
+    if (/^https?:\/\//i.test(v)) return v
+    if (key === 'whatsapp') {
+      const digits = v.replace(/[^0-9]/g, '')
+      return digits ? `https://wa.me/${digits}` : ''
+    }
+    if (key === 'telegram') {
+      const user = v.replace(/^@/, '')
+      return user ? `https://t.me/${user}` : ''
+    }
+    if (key === 'tiktok') {
+      const handle = v.replace(/^@/, '')
+      return handle ? `https://www.tiktok.com/@${handle}` : ''
+    }
+    return v
+  }
+
   const kofiUrl = links.kofi || 'https://ko-fi.com/its_simon_only'
   const socials: { key: keyof Links, label: string }[] = [
     { key: 'whatsapp', label: 'wa.me' },
@@ -56,7 +76,8 @@ export function SupportModal({ open, onClose, links: initialLinks }: { open: boo
               <div className="text-slate-300 text-sm mb-2">Contact us</div>
               <div className="flex flex-wrap gap-2">
                 {socials.map(({ key, label }) => {
-                  const url = links[key]
+                  // const url = links[key]
+                  + const url = formatUrl(key, links[key])
                   let styles = 'px-3 py-2 rounded-lg text-sm font-semibold shadow'
                   if (key === 'whatsapp') styles += ' bg-emerald-500 text-white hover:bg-emerald-400'
                   else if (key === 'telegram') styles += ' bg-blue-500 text-white hover:bg-blue-400'
