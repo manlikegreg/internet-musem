@@ -86,9 +86,11 @@ router.post('/audio', upload.single('audio'), async (req: Request, res: Response
     const username = `Anonymous ${Math.floor(Math.random() * 9999) + 1}`
     const id = randomUUID()
     const rel = `/uploads/void/${req.file.filename}`
+    const base = req.protocol + '://' + req.get('host')
+    const abs = base + rel
     const result = await pool.query(
       'INSERT INTO void_stream_messages (id, username, text, audio_url) VALUES ($1, $2, $3, $4) RETURNING *',
-      [id, username, text, rel]
+      [id, username, text, abs]
     )
     const row = result.rows[0]
     await pool.query("SELECT pg_notify('new_void', $1)", [JSON.stringify(row)])

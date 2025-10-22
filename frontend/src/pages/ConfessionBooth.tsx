@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { baseURL } from '../api/client'
 import { ensureUserCookie } from '../lib/identity'
 import { RoomHeader } from '../components/RoomHeader'
+import { resolveMediaUrl } from '../utils/media'
 
 interface ConfessionRow {
   id: string
@@ -304,7 +305,7 @@ export default function ConfessionBooth() {
                 </div>
                 {c.text && <div className="mt-2 text-slate-100 leading-relaxed">{c.text}</div>}
                 {(c as any).audio_url && (
-                  <div className="mt-2"><audio src={(c as any).audio_url} controls preload="none" className="w-64 max-w-[80vw]" /></div>
+                  <div className="mt-2"><audio src={resolveMediaUrl((c as any).audio_url)} controls preload="none" className="w-64 max-w-[80vw]" /></div>
                 )}
                 <div className="mt-3 flex items-center gap-2">
                   {['💔','🙏','😳','😭'].map(e => (

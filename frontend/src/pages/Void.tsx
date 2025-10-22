@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { api, baseURL } from '../api/client'
 import { ensureUserCookie } from '../lib/identity'
 import { RoomHeader } from '../components/RoomHeader'
+import { resolveMediaUrl } from '../utils/media'
 
 function MiniRecorderVoid({ onUploaded }: { onUploaded?: ()=>void }) {
   const [supported, setSupported] = useState(false)
@@ -131,7 +132,7 @@ export default function VoidPage() {
             {latest.map((it:any) => (
               <li key={it.id} className="border border-slate-800 rounded-2xl p-3 bg-slate-900/60 text-slate-200">
                 {it.text && <div className="mb-1">{it.text}</div>}
-                {it.audio_url && <audio src={it.audio_url} controls preload="none" className="w-64" />}
+                {it.audio_url && <audio src={resolveMediaUrl(it.audio_url)} controls preload="none" className="w-64" />}
               </li>
             ))}
           </ul>

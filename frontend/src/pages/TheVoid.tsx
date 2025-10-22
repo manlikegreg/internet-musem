@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { baseURL } from '../api/client'
 import { RoomHeader } from '../components/RoomHeader'
+import { resolveMediaUrl } from '../utils/media'
 
 function Starfield() {
   const ref = useRef<HTMLCanvasElement | null>(null)

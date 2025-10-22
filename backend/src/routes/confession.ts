@@ -141,16 +141,17 @@ router.post('/audio', upload.single('audio'), async (req: Request, res: Response
   try {
     if (!req.file) return res.status(400).json({ error: 'audio required' })
     const text = (req.body?.text !== undefined ? String(req.body.text).trim() : '')
-    const id = randomUUID()
     const username = `Anonymous ${Math.floor(Math.random() * 9999) + 1}`
+    const id = randomUUID()
     const rel = `/uploads/confession/${req.file.filename}`
-    const r = await pool.query(
+    const base = req.protocol + '://' + req.get('host')
+    const abs = base + rel
+    const result = await pool.query(
       'INSERT INTO confessions_booth (id, username, text, audio_url) VALUES ($1, $2, $3, $4) RETURNING *',
-      [id, username, text, rel]
+      [id, username, text, abs]
     )
-    const row = r.rows[0]
-    await pool.query("SELECT pg_notify('confession_new', $1)", [JSON.stringify(row)])
-    broadcast({ type: 'new', data: row })
+    const row = result.rows[0]
+    await pool.query("SELECT pg_notify('new_confession', $1)", [JSON.stringify(row)])
     res.status(201).json(row)
   } catch (e) {
     res.status(500).json({ error: 'Failed to upload audio' })

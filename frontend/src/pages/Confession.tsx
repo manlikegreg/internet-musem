@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { api, baseURL } from '../api/client'
 import { RoomHeader } from '../components/RoomHeader'
+import { resolveMediaUrl } from '../utils/media'
 
 interface Confession { id: number; message: string; created_at: string }
 
@@ -94,7 +95,7 @@ export default function Confession() {
             {latest.map((c:any) => (
               <li key={c.id} className="border border-slate-800 rounded-2xl p-3 bg-slate-900/60 text-slate-200">
                 {c.text && <div className="mb-1">{c.text}</div>}
-                {c.audio_url && <audio src={c.audio_url} controls preload="none" className="w-64" />}
+                {c.audio_url && <audio src={resolveMediaUrl(c.audio_url)} controls preload="none" className="w-64" />}
               </li>
             ))}
           </ul>

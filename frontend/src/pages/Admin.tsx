@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { api } from '../api/client'
+import { resolveMediaUrl } from '../utils/media'
 
 const tables = [
   'graveyard','confessions_booth','void_stream_messages','prompt_battles','oracle_questions','capsules','apologies','compliments','dream_archive','mood_mirror_readings'
@@ -246,7 +247,7 @@ function DataExplorer() {
                   <td className="p-2 font-mono text-xs opacity-80">{String(r.id).slice(0,8)}…</td>
                   <td className="p-2 max-w-[12rem] truncate" title={user}>{user}</td>
                   <td className="p-2 max-w-[28rem] truncate" title={typeof primary==='string'?primary:JSON.stringify(primary)}>{typeof primary==='string'?primary:JSON.stringify(primary)}</td>
-                  <td className="p-2">{r.audio_url ? <audio src={r.audio_url} controls preload="none" className="w-56" /> : <span className="opacity-50">—</span>}</td>
+                  <td className="p-2">{r.audio_url ? <audio src={resolveMediaUrl(r.audio_url)} controls preload="none" className="w-56" /> : <span className="opacity-50">—</span>}</td>
                   <td className="p-2 text-xs opacity-80">{r.created_at ? new Date(r.created_at).toLocaleString() : '—'}</td>
                 </tr>
               )
@@ -632,6 +633,9 @@ export default function Admin() {
 
         {/* Ambient Sound Manager */}
         <AmbientSoundManager />
+
+        {/* Support & Contact Links */}
+        <LinksManager />
 
         {/* Data Explorer */}
         <DataExplorer />
