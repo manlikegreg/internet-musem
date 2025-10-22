@@ -10,6 +10,7 @@ const router = express.Router()
 // In-memory SSE clients
 let clients: Response[] = []
 let voidListenerReady = false
+let voidListenerClient: any = null
 
 function broadcast(payload: any) {
   const msg = `data: ${JSON.stringify(payload)}\n\n`
@@ -31,16 +32,30 @@ const upload = multer({ storage, limits: { fileSize: 25 * 1024 * 1024 } }) // ~2
 
 async function ensureVoidListener() {
   if (voidListenerReady) return
-  const client = await pool.connect()
-  await client.query('LISTEN new_void')
-  client.on('notification', (msg) => {
-    try {
-      const data = msg.payload ? JSON.parse(msg.payload) : null
-      if (msg.channel === 'new_void') broadcast({ type: 'void', data })
-    } catch {}
-  })
-  client.on('error', () => {})
-  voidListenerReady = true
+  try {
+    const client = await pool.connect()
+    voidListenerClient = client
+    await client.query('LISTEN new_void')
+    client.on('notification', (msg) => {
+      try {
+        const data = msg.payload ? JSON.parse(msg.payload) : null
+        if (msg.channel === 'new_void') broadcast({ type: 'void', data })
+      } catch {}
+    })
+    client.on('error', (_err) => {
+      voidListenerReady = false
+      try { client.release?.() } catch {}
+      setTimeout(() => { ensureVoidListener().catch(() => {}) }, 1000)
+    })
+    client.on('end', () => {
+      voidListenerReady = false
+      setTimeout(() => { ensureVoidListener().catch(() => {}) }, 1000)
+    })
+    voidListenerReady = true
+  } catch (_err) {
+    voidListenerReady = false
+    setTimeout(() => { ensureVoidListener().catch(() => {}) }, 1000)
+  }
 }
 
 // Optional: list recent for persistence across refresh and pagination

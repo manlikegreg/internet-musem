@@ -23,6 +23,7 @@ const upload = multer({ storage, limits: { fileSize: 25 * 1024 * 1024 } }) // ~2
 // SSE clients for confession stream
 let clients: Response[] = []
 let listenerReady = false
+let listenerClient: any = null
 
 function broadcast(payload: any) {
   const msg = `data: ${JSON.stringify(payload)}\n\n`
@@ -31,18 +32,32 @@ function broadcast(payload: any) {
 
 async function ensureListener() {
   if (listenerReady) return
-  const client = await pool.connect()
-  await client.query('LISTEN confession_new')
-  await client.query('LISTEN confession_reaction')
-  client.on('notification', (msg) => {
-    try {
-      const payload = msg.payload ? JSON.parse(msg.payload) : null
-      if (msg.channel === 'confession_new') broadcast({ type: 'new', data: payload })
-      if (msg.channel === 'confession_reaction') broadcast({ type: 'reaction', data: payload })
-    } catch {}
-  })
-  client.on('error', () => {})
-  listenerReady = true
+  try {
+    const client = await pool.connect()
+    listenerClient = client
+    await client.query('LISTEN confession_new')
+    await client.query('LISTEN confession_reaction')
+    client.on('notification', (msg) => {
+      try {
+        const payload = msg.payload ? JSON.parse(msg.payload) : null
+        if (msg.channel === 'confession_new') broadcast({ type: 'new', data: payload })
+        if (msg.channel === 'confession_reaction') broadcast({ type: 'reaction', data: payload })
+      } catch {}
+    })
+    client.on('error', (_err) => {
+      listenerReady = false
+      try { client.release?.() } catch {}
+      setTimeout(() => { ensureListener().catch(() => {}) }, 1000)
+    })
+    client.on('end', () => {
+      listenerReady = false
+      setTimeout(() => { ensureListener().catch(() => {}) }, 1000)
+    })
+    listenerReady = true
+  } catch (_err) {
+    listenerReady = false
+    setTimeout(() => { ensureListener().catch(() => {}) }, 1000)
+  }
 }
 
 router.post('/', async (req: Request, res: Response) => {
@@ -151,9 +166,8 @@ router.post('/audio', upload.single('audio'), async (req: Request, res: Response
       [id, username, text, abs]
     )
     const row = result.rows[0]
--    await pool.query("SELECT pg_notify('new_confession', $1)", [JSON.stringify(row)])
-+    await pool.query("SELECT pg_notify('confession_new', $1)", [JSON.stringify(row)])
-     res.status(201).json(row)
+    await pool.query("SELECT pg_notify('confession_new', $1)", [JSON.stringify(row)])
+    res.status(201).json(row)
   } catch (e) {
     res.status(500).json({ error: 'Failed to upload audio' })
   }
