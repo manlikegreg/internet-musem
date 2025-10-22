@@ -76,8 +76,7 @@ export function SupportModal({ open, onClose, links: initialLinks }: { open: boo
               <div className="text-slate-300 text-sm mb-2">Contact us</div>
               <div className="flex flex-wrap gap-2">
                 {socials.map(({ key, label }) => {
-                  // const url = links[key]
-                  + const url = formatUrl(key, links[key])
+                  const url = formatUrl(key, links[key])
                   let styles = 'px-3 py-2 rounded-lg text-sm font-semibold shadow'
                   if (key === 'whatsapp') styles += ' bg-emerald-500 text-white hover:bg-emerald-400'
                   else if (key === 'telegram') styles += ' bg-blue-500 text-white hover:bg-blue-400'

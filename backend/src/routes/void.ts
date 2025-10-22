@@ -36,13 +36,13 @@ async function ensureVoidListener() {
     const client = await pool.connect()
     voidListenerClient = client
     await client.query('LISTEN new_void')
-    client.on('notification', (msg) => {
+    client.on('notification', (msg: any) => {
       try {
         const data = msg.payload ? JSON.parse(msg.payload) : null
         if (msg.channel === 'new_void') broadcast({ type: 'void', data })
       } catch {}
     })
-    client.on('error', (_err) => {
+    client.on('error', (_err: any) => {
       voidListenerReady = false
       try { client.release?.() } catch {}
       setTimeout(() => { ensureVoidListener().catch(() => {}) }, 1000)

@@ -37,14 +37,14 @@ async function ensureListener() {
     listenerClient = client
     await client.query('LISTEN confession_new')
     await client.query('LISTEN confession_reaction')
-    client.on('notification', (msg) => {
+    client.on('notification', (msg: any) => {
       try {
         const payload = msg.payload ? JSON.parse(msg.payload) : null
         if (msg.channel === 'confession_new') broadcast({ type: 'new', data: payload })
         if (msg.channel === 'confession_reaction') broadcast({ type: 'reaction', data: payload })
       } catch {}
     })
-    client.on('error', (_err) => {
+    client.on('error', (_err: any) => {
       listenerReady = false
       try { client.release?.() } catch {}
       setTimeout(() => { ensureListener().catch(() => {}) }, 1000)
