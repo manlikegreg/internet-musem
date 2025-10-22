@@ -151,8 +151,9 @@ router.post('/audio', upload.single('audio'), async (req: Request, res: Response
       [id, username, text, abs]
     )
     const row = result.rows[0]
-    await pool.query("SELECT pg_notify('new_confession', $1)", [JSON.stringify(row)])
-    res.status(201).json(row)
+-    await pool.query("SELECT pg_notify('new_confession', $1)", [JSON.stringify(row)])
++    await pool.query("SELECT pg_notify('confession_new', $1)", [JSON.stringify(row)])
+     res.status(201).json(row)
   } catch (e) {
     res.status(500).json({ error: 'Failed to upload audio' })
   }

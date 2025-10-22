@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { api, baseURL } from '../api/client'
 import { RoomHeader } from '../components/RoomHeader'
 import { resolveMediaUrl } from '../utils/media'
@@ -54,7 +54,7 @@ export default function Confession() {
   const [message, setMessage] = useState('')
   const [latest, setLatest] = useState<any[]>([])
 
-  async function load() {
+  const load = useCallback(async () => {
     const { data } = await api.get<Confession[]>('/confess')
     setItems(data)
     try {
@@ -62,9 +62,9 @@ export default function Confession() {
       const d = await r.json()
       if (Array.isArray(d)) setLatest(d)
     } catch {}
-  }
+  }, [])
 
-  useEffect(() => { load() }, [])
+  useEffect(() => { load() }, [load])
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()

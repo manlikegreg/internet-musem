@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { api, baseURL } from '../api/client'
 import { ensureUserCookie } from '../lib/identity'
 import { RoomHeader } from '../components/RoomHeader'
@@ -90,15 +90,15 @@ export default function VoidPage() {
     setWindOn(false)
   }
 
-  async function loadLatest() {
+  const loadLatest = useCallback(async () => {
     try {
       const r = await fetch(`${baseURL}/void?limit=10`)
       const d = await r.json()
       if (Array.isArray(d)) setLatest(d)
     } catch {}
-  }
+  }, [])
 
-  useEffect(() => { loadLatest() }, [])
+  useEffect(() => { loadLatest() }, [loadLatest])
   useEffect(() => {
     const uid = ensureUserCookie()
     fetch(`${baseURL}/visit/hit`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ client_id: uid, room: 'Void' }) }).catch(()=>{})
