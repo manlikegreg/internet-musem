@@ -29,9 +29,9 @@ export function SupportModal({ open, onClose, links: initialLinks }: { open: boo
 
   const kofiUrl = links.kofi || 'https://ko-fi.com/its_simon_only'
   const socials: { key: keyof Links, label: string }[] = [
-    { key: 'whatsapp', label: 'WhatsApp' },
-    { key: 'telegram', label: 'Telegram' },
-    { key: 'tiktok', label: 'TikTok' },
+    { key: 'whatsapp', label: 'wa.me' },
+    { key: 'telegram', label: 't.me' },
+    { key: 'tiktok', label: 'tiktok.com' },
   ]
 
   return (
