@@ -12,7 +12,7 @@ import voidRoutes from './routes/void';
 import promptBattleRoutes from './routes/promptBattle';
 import oracleRoutes from './routes/oracle';
 import timeCapsuleRoutes from './routes/timeCapsule';
-import timeCapsuleV2Routes from './routes/timecapsule';
+import timeCapsuleV2Routes from './routes/timeCapsule';
 import { unlockCapsules } from './jobs/capsuleUnlocker';
 import apologyRoutes from './routes/apology';
 import complimentRoutes from './routes/compliment';
@@ -72,8 +72,8 @@ app.use('/api/users', userRoutes);
 (async () => {
   try {
     await initDb();
-    app.listen(env.PORT, () => {
-      console.log(`API running on http://localhost:${env.PORT}/api`);
+    app.listen(env.PORT, '0.0.0.0', () => {
+      console.log(`API running on http://0.0.0.0:${env.PORT}/api`);
     });
     // Schedule capsule unlocker (every minute)
     setInterval(unlockCapsules, 60_000);
@@ -84,3 +84,4 @@ app.use('/api/users', userRoutes);
     process.exit(1);
   }
 })();
+
