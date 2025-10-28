@@ -11,9 +11,10 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 4173,
     allowedHosts: [
-      'internet-museum-frontend.onrender.com', // replace with your actual Render domain
+      'https://internet-musem.onrender.com', // replace with your actual Render domain
       'vps-1-006o.onrender.com',               // if applicable
       'localhost'
     ]
   }
 })
+
