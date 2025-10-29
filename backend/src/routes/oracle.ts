@@ -18,7 +18,7 @@ async function ensureListener() {
   const client = await pool.connect()
   await client.query('LISTEN oracle_question')
   await client.query('LISTEN oracle_reply')
-  client.on('notification', (msg) => {
+  client.on('notification', (msg: any) => {
     try {
       const data = msg.payload ? JSON.parse(msg.payload) : null
       if (msg.channel === 'oracle_question') broadcast({ type: 'question', data })

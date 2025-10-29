@@ -20,7 +20,7 @@ async function ensureListener() {
   const client = await pool.connect()
   await client.query('LISTEN capsule_opened')
   await client.query('LISTEN capsule_sealed')
-  client.on('notification', (msg) => {
+  client.on('notification', (msg: any) => {
     try {
       const data = msg.payload ? JSON.parse(msg.payload) : null
       if (msg.channel === 'capsule_opened') broadcast({ type: 'opened', data })

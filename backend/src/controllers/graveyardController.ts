@@ -14,7 +14,8 @@ export async function getGraves(_req: Request, res: Response) {
 export async function addGrave(req: Request, res: Response) {
   try {
     const parsed = GraveCreateSchema.parse(req.body);
-    const created = await Graveyard.createGrave(parsed);
+    const username = String((req.body as any)?.username || '').trim() || `Anonymous ${Math.floor(Math.random() * 1000) + 1}`;
+    const created = await Graveyard.createGrave({ ...parsed, username });
     res.status(201).json(created);
   } catch (err: any) {
     if (err?.issues) return res.status(400).json({ error: 'Invalid input', details: err.issues });

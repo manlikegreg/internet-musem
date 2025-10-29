@@ -26,7 +26,7 @@ async function ensureListener() {
   if (listenerReady) return
   const client = await pool.connect()
   await client.query('LISTEN mood_created')
-  client.on('notification', (msg) => {
+  client.on('notification', (msg: any) => {
     try {
       const data = msg.payload ? JSON.parse(msg.payload) : null
       if (msg.channel === 'mood_created') broadcast({ type: 'mood', data })

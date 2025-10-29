@@ -18,7 +18,7 @@ async function ensureListener() {
   const client = await pool.connect()
   await client.query('LISTEN compliment_created')
   await client.query('LISTEN compliment_reacted')
-  client.on('notification', (msg) => {
+  client.on('notification', (msg: any) => {
     try {
       const data = msg.payload ? JSON.parse(msg.payload) : null
       if (msg.channel === 'compliment_created') broadcast({ type: 'compliment', data })

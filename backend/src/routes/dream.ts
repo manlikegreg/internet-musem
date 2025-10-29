@@ -19,7 +19,7 @@ async function ensureListener() {
   await client.query('LISTEN dream_created')
   await client.query('LISTEN dream_interpreted')
   await client.query('LISTEN dream_reacted')
-  client.on('notification', (msg) => {
+  client.on('notification', (msg: any) => {
     try {
       const data = msg.payload ? JSON.parse(msg.payload) : null
       if (msg.channel === 'dream_created') broadcast({ type: 'dream', data })
